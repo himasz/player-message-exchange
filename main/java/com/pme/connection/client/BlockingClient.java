@@ -41,7 +41,7 @@ public class BlockingClient implements IClient {
         try {
             return reader.readLine();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
             return "";
         }
     }
@@ -51,7 +51,7 @@ public class BlockingClient implements IClient {
         try {
             socket.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
     }
 }

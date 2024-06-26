@@ -19,7 +19,7 @@ public class BlockingServer implements IServer {
 
     public BlockingServer() {
         //Assume we are getting the port from configuration file
-        this(2345);
+        this(3455);
     }
 
     public BlockingServer(int port) {
@@ -33,8 +33,7 @@ public class BlockingServer implements IServer {
             System.out.println("Server started on port " + port);
             networkExecutor.execute(() -> connectionLoop());
         } catch (IOException ex) {
-            //TODO: use proper logs
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -44,7 +43,7 @@ public class BlockingServer implements IServer {
                 Socket socket = serverSocket.accept();
                 System.out.println("New Client is Connected!");
                 players.add(socket);
-                clientsExecutor.execute(new ClientHandler(socket, players)::run);
+                clientsExecutor.execute(new ClientHandler(socket, players));
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -61,7 +60,7 @@ public class BlockingServer implements IServer {
             running = false;
             serverSocket.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
     }
 

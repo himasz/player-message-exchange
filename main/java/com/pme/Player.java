@@ -11,6 +11,11 @@ public class Player {
         this.channel = new BlockingClient();
     }
 
+    public Player(String name, String hostname, int port) {
+        this.name = name;
+        this.channel = new BlockingClient(hostname, port);
+    }
+
 
     public void sendMessage(String message) {
         channel.sendMessage(message);
@@ -18,5 +23,9 @@ public class Player {
 
     public String receiveMessage() {
         return channel.receiveMessage();
+    }
+
+    public void done() {
+        this.channel.close();
     }
 }

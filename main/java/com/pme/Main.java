@@ -2,21 +2,23 @@ package com.pme;
 
 import com.pme.connection.server.blocking.BlockingServer;
 
-import java.io.*;
-
 public class Main {
-    public static void main(String[] args) {
-        BlockingServer server = new BlockingServer(3455);
+    public static void main(String[] args) throws InterruptedException {
+        BlockingServer server = new BlockingServer();
         server.startServer();
 
         Player receiver = new Player("receiver");
         Player initiator = new Player("initiator");
+        String receivedMessage = "";
         for (int i = 1; i < 11; i++) {
-            initiator.sendMessage("Hello");
-            String receivedMessage = receiver.receiveMessage();
-            System.out.println("receivedMessage: " + receivedMessage);
-            initiator.sendMessage(receivedMessage);
+            initiator.sendMessage(!"".equals(receivedMessage) ? receivedMessage : "Hello");
+            receivedMessage = receiver.receiveMessage();
+            System.out.println("Reply: " + receivedMessage);
+            Thread.sleep(100);
         }
-//        server.close();
+        initiator.done();
+        receiver.done();
+        server.close();
+        System.exit(0);
     }
 }

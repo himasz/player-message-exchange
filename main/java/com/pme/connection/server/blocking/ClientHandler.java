@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class ClientHandler {
+class ClientHandler implements Runnable {
     private final Socket socket;
     private final CopyOnWriteArrayList<Socket> players;
     int count = 0;
@@ -16,36 +16,30 @@ class ClientHandler {
     }
 
     public void run() {
-        try (
-                InputStream input = socket.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input))
-        ) {
+        try (InputStream input = socket.getInputStream(); BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             while (players.size() == 1) {
+                // Wait for another player to join
             }
             Optional<Socket> optionalOtherSocket = players.stream().filter(socket1 -> socket != socket1).findFirst();
             if (optionalOtherSocket.isPresent()) {
                 Socket otherSocket = optionalOtherSocket.get();
-                OutputStream output = otherSocket.getOutputStream();
-                PrintWriter writer = new PrintWriter(output, true);
+                PrintWriter otherWriter = new PrintWriter(otherSocket.getOutputStream(), true);
 
                 String text;
-
                 while ((text = reader.readLine()) != null && count != 10) {
-                    System.out.println("Received: " + text);
-                    writer.println(text + " - " + ++count);
-
+                    System.out.println("Sent: " + text);
+                    otherWriter.println(text + " - " + ++count);
                 }
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
         }
-//        finally {
-//            try {
-//                socket.close();
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
     }
 }
 
