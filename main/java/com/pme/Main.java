@@ -5,7 +5,7 @@ import com.pme.connection.server.blocking.BlockingServer;
 import java.io.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         BlockingServer server = new BlockingServer(3455);
         server.startServer();
 

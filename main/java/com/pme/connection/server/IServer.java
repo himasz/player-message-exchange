@@ -1,7 +1,7 @@
 package com.pme.connection.server;
 
 public interface IServer {
-    public void startServer();
+    void startServer();
 
-    public void close();
+    void close();
 }

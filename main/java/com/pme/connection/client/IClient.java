@@ -1,10 +1,10 @@
 package com.pme.connection.client;
 
 public interface IClient {
-    public void sendMessage(String text);
+    void sendMessage(String text);
 
-    public String receiveMessage();
+    String receiveMessage();
 
-    public void close();
+    void close();
 
 }

@@ -10,9 +10,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class BlockingServer implements IServer {
-    private int port;
+    private final int port;
     private ServerSocket serverSocket;
-    private CopyOnWriteArrayList<Socket> players = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Socket> players = new CopyOnWriteArrayList<>();
     Executor networkExecutor = Executors.newSingleThreadExecutor();
     Executor clientsExecutor = Executors.newFixedThreadPool(2);
     private boolean running = true;
@@ -33,6 +33,7 @@ public class BlockingServer implements IServer {
             System.out.println("Server started on port " + port);
             networkExecutor.execute(() -> connectionLoop());
         } catch (IOException ex) {
+            //TODO: use proper logs
             ex.printStackTrace();
         }
     }

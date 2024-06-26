@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class ClientHandler {
-    private Socket socket;
+    private final Socket socket;
     private final CopyOnWriteArrayList<Socket> players;
     int count = 0;
 
@@ -17,7 +17,7 @@ class ClientHandler {
     public void run() {
         try (
                 InputStream input = socket.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input))
         ) {
             for (Socket player : players) {
                 if (player != socket) {

@@ -2,11 +2,9 @@ package com.pme;
 
 import com.pme.connection.client.BlockingClient;
 
-import java.io.*;
-
 public class Player {
     private final BlockingClient channel;
-    private String name;
+    private final String name;
 
     public Player(String name) {
         this.name = name;

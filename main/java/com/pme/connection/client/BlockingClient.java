@@ -34,7 +34,7 @@ public class BlockingClient implements IClient {
 
     @Override
     public void sendMessage(String message) {
-        if (10 != count) {
+        if (10 != count++) {
             writer.println(message);
         } else {
             close();
