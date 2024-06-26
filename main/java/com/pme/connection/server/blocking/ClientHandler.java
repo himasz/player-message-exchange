@@ -2,6 +2,7 @@ package com.pme.connection.server.blocking;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class ClientHandler {
@@ -19,17 +20,19 @@ class ClientHandler {
                 InputStream input = socket.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(input))
         ) {
-            for (Socket player : players) {
-                if (player != socket) {
-                    OutputStream output = player.getOutputStream();
-                    PrintWriter writer = new PrintWriter(output, true);
+            while (players.size() == 1) {
+            }
+            Optional<Socket> optionalOtherSocket = players.stream().filter(socket1 -> socket != socket1).findFirst();
+            if (optionalOtherSocket.isPresent()) {
+                Socket otherSocket = optionalOtherSocket.get();
+                OutputStream output = otherSocket.getOutputStream();
+                PrintWriter writer = new PrintWriter(output, true);
 
-                    String text;
+                String text;
 
-                    if ((text = reader.readLine()) != null && count != 10) {
-                        System.out.println("Received: " + text);
-                        writer.println(text + " - " + ++count);
-                    }
+                while ((text = reader.readLine()) != null && count != 10) {
+                    System.out.println("Received: " + text);
+                    writer.println(text + " - " + ++count);
 
                 }
             }

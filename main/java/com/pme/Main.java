@@ -11,11 +11,11 @@ public class Main {
 
         Player receiver = new Player("receiver");
         Player initiator = new Player("initiator");
-        for (int i = 0; i < 10; i++) {
-            initiator.sendMessage("Hello: " + i);
-            System.out.println(receiver.receiveMessage());
-            System.out.println(initiator.receiveMessage());
-
+        for (int i = 1; i < 11; i++) {
+            initiator.sendMessage("Hello");
+            String receivedMessage = receiver.receiveMessage();
+            System.out.println("receivedMessage: " + receivedMessage);
+            initiator.sendMessage(receivedMessage);
         }
 //        server.close();
     }

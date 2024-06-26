@@ -8,7 +8,6 @@ public class BlockingClient implements IClient {
     private Socket socket;
     private PrintWriter writer;
     private BufferedReader reader;
-    private int count = 0;
 
     public BlockingClient() {
         //Assume we are getting the values from configuration file
@@ -34,11 +33,7 @@ public class BlockingClient implements IClient {
 
     @Override
     public void sendMessage(String message) {
-        if (10 != count++) {
-            writer.println(message);
-        } else {
-            close();
-        }
+        writer.println(message);
     }
 
     @Override
