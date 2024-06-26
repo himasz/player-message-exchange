@@ -1,19 +1,20 @@
 package com.pme;
 
 import com.pme.connection.client.BlockingClient;
+import com.pme.connection.client.IClient;
 
 public class Player {
-    private final BlockingClient channel;
     private final String name;
+    private final IClient channel;
 
     public Player(String name) {
         this.name = name;
         this.channel = new BlockingClient();
     }
 
-    public Player(String name, String hostname, int port) {
+    public Player(String name, IClient channel) {
         this.name = name;
-        this.channel = new BlockingClient(hostname, port);
+        this.channel = channel;
     }
 
 
