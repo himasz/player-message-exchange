@@ -5,12 +5,12 @@ import java.net.Socket;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-class ClientHandler implements Runnable {
+public class BlockingClientHandler implements Runnable {
     private final Socket socket;
     private final CopyOnWriteArrayList<Socket> players;
     int count = 0;
 
-    public ClientHandler(Socket socket, CopyOnWriteArrayList<Socket> players) {
+    public BlockingClientHandler(Socket socket, CopyOnWriteArrayList<Socket> players) {
         this.socket = socket;
         this.players = players;
     }

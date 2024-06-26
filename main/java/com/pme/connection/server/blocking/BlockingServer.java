@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 public class BlockingServer implements IServer {
     private final int port;
     private ServerSocket serverSocket;
-    private final CopyOnWriteArrayList<Socket> players = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Socket> clients = new CopyOnWriteArrayList<>();
     Executor networkExecutor = Executors.newSingleThreadExecutor();
     Executor clientsExecutor = Executors.newFixedThreadPool(2);
     private boolean running = true;
@@ -42,8 +42,8 @@ public class BlockingServer implements IServer {
             while (running) {
                 Socket socket = serverSocket.accept();
                 System.out.println("New Client is Connected!");
-                players.add(socket);
-                clientsExecutor.execute(new ClientHandler(socket, players));
+                clients.add(socket);
+                clientsExecutor.execute(new BlockingClientHandler(socket, clients));
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -54,7 +54,7 @@ public class BlockingServer implements IServer {
     @Override
     public void close() {
         try {
-            for (Socket player : players) {
+            for (Socket player : clients) {
                 player.close();
             }
             running = false;
