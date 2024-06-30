@@ -27,28 +27,26 @@ public class BlockingServer implements IServer {
     }
 
     @Override
-    public void startServer() {
-        try {
-            this.serverSocket = new ServerSocket(port);
-            System.out.println("Server started on port " + port);
-            networkExecutor.execute(() -> connectionLoop());
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+    public void startServer() throws IOException {
+        this.serverSocket = new ServerSocket(port);
+        System.out.println("Server started on port " + port);
+        networkExecutor.execute(() -> {
+            try {
+                connectionLoop();
+            } catch (IOException e) {
+                //TODO: check of return it to the client
+                System.out.println(e.getMessage());
+            }
+        });
     }
 
-    private void connectionLoop() {
-        try {
-            while (running) {
-                Socket socket = serverSocket.accept();
-                System.out.println("New Client is Connected!");
-                clients.add(socket);
-                clientsExecutor.execute(new BlockingClientHandler(socket, clients));
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+    private void connectionLoop() throws IOException {
+        while (running) {
+            Socket socket = serverSocket.accept();
+            System.out.println("New Client is Connected!");
+            clients.add(socket);
+            clientsExecutor.execute(new BlockingClientHandler(socket, clients));
         }
-
     }
 
     @Override

@@ -1,10 +1,14 @@
 package com.pme.connection.client;
 
+import java.io.IOException;
+
 public interface IClient {
-    void sendMessage(String text);
+    void startConnection() throws IOException;
 
-    String receiveMessage();
+    void sendMessage(String text) throws IOException;
 
-    void close();
+    String receiveMessage() throws IOException;
+
+    void close() throws IOException;
 
 }

@@ -1,10 +1,13 @@
-package com.pme.connection.client;
+package com.pme.connection.client.blocking;
+
+import com.pme.connection.client.IClient;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class BlockingClient implements IClient {
+    private final int port;
+    private final String hostname;
     private Socket socket;
     private PrintWriter writer;
     private BufferedReader reader;
@@ -15,20 +18,18 @@ public class BlockingClient implements IClient {
     }
 
     public BlockingClient(String hostname, int port) {
-        try {
-            this.socket = new Socket(hostname, port);
+        this.port = port;
+        this.hostname = hostname;
+    }
 
-            OutputStream output = socket.getOutputStream();
-            this.writer = new PrintWriter(output, true);
+    @Override
+    public void startConnection() throws IOException {
+        this.socket = new Socket(hostname, port);
+        OutputStream output = socket.getOutputStream();
+        this.writer = new PrintWriter(output, true);
 
-            InputStream input = socket.getInputStream();
-            this.reader = new BufferedReader(new InputStreamReader(input));
-
-        } catch (UnknownHostException ex) {
-            System.out.println("Server not found: " + ex.getMessage());
-        } catch (IOException ex) {
-            System.out.println("I/O error: " + ex.getMessage());
-        }
+        InputStream input = socket.getInputStream();
+        this.reader = new BufferedReader(new InputStreamReader(input));
     }
 
     @Override
