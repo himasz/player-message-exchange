@@ -27,26 +27,31 @@ public class NonBlockingClientHandler implements Runnable {
         if (otherOptional.isPresent()) {
             SocketChannel otherSocketChannel = otherOptional.get();
             try {
+                ByteBuffer readBuffer = ByteBuffer.allocate(256);
+                ByteBuffer writeBuffer = ByteBuffer.allocate(256);
                 while (count < 10 && socketChannel.isConnected()) {
-                    ByteBuffer readBuffer = ByteBuffer.allocate(256);
+                    readBuffer.clear();
                     int numRead = socketChannel.read(readBuffer);
 
-                    if (numRead == -1) {
+                    if (numRead > 0) {
+                        readBuffer.flip();
+                        byte[] data = new byte[numRead];
+                        readBuffer.get(data);
+                        String message = new String(data).trim();
+                        System.out.println("Server: " + message);
+
+                        message += " - " + ++count;
+                        writeBuffer.clear();
+                        writeBuffer.put(message.getBytes());
+                        writeBuffer.flip();
+                        otherSocketChannel.write(writeBuffer);
+                    } else if (numRead == -1) {
                         socketChannel.close();
                         key.cancel();
                         System.out.println("Client disconnected");
                         return;
                     }
-                    if (numRead != 0) {
-                        String message = new String(readBuffer.array()).trim();
-                        System.out.println("Sent: " + message);
 
-                        message += " - " + ++count;
-                        ByteBuffer writeBuffer = ByteBuffer.allocate(256);
-                        writeBuffer.put(message.getBytes());
-                        writeBuffer.flip();
-                        otherSocketChannel.write(writeBuffer);
-                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();

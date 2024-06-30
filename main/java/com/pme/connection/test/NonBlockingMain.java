@@ -14,23 +14,32 @@ public class NonBlockingMain {
             server.startServer();
             Player initiator = new Player("initiator", new NioNonBlockingClient());
             initiator.connect();
-            Player receiver = new Player("receiver", new NioNonBlockingClient());
-            receiver.connect();
-            String receivedMessage = "";
+            Thread.sleep(10);
+            Player other = new Player("other", new NioNonBlockingClient());
+            other.connect();
+
+            String message = "";
             for (int i = 1; i < 11; i++) {
-                initiator.sendMessage(!receivedMessage.isEmpty() ? receivedMessage : "Hello");
-                receivedMessage = receiver.receiveMessage();
-                while (receivedMessage == null || receivedMessage.isBlank()) {
-                    receivedMessage = receiver.receiveMessage();
+                initiator.sendMessage(!message.isEmpty() ? message : "Hello");
+                message = other.receiveMessage();
+                while (message == null || message.isBlank()) {
+                    message = other.receiveMessage();
                 }
-                System.out.println("Reply: " + receivedMessage);
-                receivedMessage += " - " + i;
+                System.out.println("Other received: " + message);
+                other.sendMessage(message);
+                message = initiator.receiveMessage();
+//                while (message == null || message.isBlank()) {
+//                    message = initiator.receiveMessage();
+//                }
+                System.out.println("Initiator received: " + message);
             }
             initiator.done();
-            receiver.done();
+            other.done();
             server.close();
             System.exit(0);
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
