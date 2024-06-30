@@ -1,11 +1,11 @@
-package com.pme.connection.test;
+package com.pme.connection.test.blocking;
 
 import com.pme.Player;
 import com.pme.connection.server.blocking.BlockingServer;
 
 import java.io.IOException;
 
-public class Main {
+public class BlockingMain {
     public static void main(String[] args) {
         try {
             BlockingServer server = new BlockingServer();
@@ -13,17 +13,19 @@ public class Main {
 
             Player initiator = new Player("initiator");
             initiator.connect();
-            Player receiver = new Player("receiver");
-            receiver.connect();
-            String receivedMessage = "";
+            Player other = new Player("other");
+            other.connect();
+            String message = "";
             for (int i = 1; i < 11; i++) {
-                initiator.sendMessage(!receivedMessage.isEmpty() ? receivedMessage : "Hello");
-                receivedMessage = receiver.receiveMessage();
-                System.out.println("Reply: " + receivedMessage);
-                receivedMessage += " - " + i;
+                initiator.sendMessage(!message.isEmpty() ? message : "Hello");
+                message = other.receiveMessage();
+                System.out.println("Other received: " + message);
+                other.sendMessage(message);
+                message = initiator.receiveMessage();
+                System.out.println("Initiator received: " + message);
             }
             initiator.done();
-            receiver.done();
+            other.done();
             server.close();
             System.exit(0);
         } catch (IOException e) {

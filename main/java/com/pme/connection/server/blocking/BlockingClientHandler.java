@@ -27,7 +27,7 @@ public class BlockingClientHandler implements Runnable {
 
                 String text;
                 while ((text = reader.readLine()) != null && count != 10) {
-                    System.out.println("Sent: " + text);
+                    System.out.println("Server: " + text);
                     otherWriter.println(text + " - " + ++count);
                 }
             }
