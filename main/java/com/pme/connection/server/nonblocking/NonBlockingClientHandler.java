@@ -49,14 +49,14 @@ public class NonBlockingClientHandler implements Runnable {
                     }
                 }
             } catch (IOException e) {
-                System.out.println(e);
+                e.printStackTrace();
             } finally {
                 try {
                     socketChannel.close();
                     otherSocketChannel.close();
                     key.cancel();
                 } catch (IOException ex) {
-                    System.out.println(ex);
+                    ex.printStackTrace();
                 }
 
             }
