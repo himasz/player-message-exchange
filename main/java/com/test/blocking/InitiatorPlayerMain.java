@@ -1,4 +1,4 @@
-package com.pme.connection.test.blocking;
+package com.test.blocking;
 
 import com.pme.Player;
 
