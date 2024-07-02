@@ -1,4 +1,4 @@
-package com.pme.connection.test;
+package com.test.nonblocking;
 
 import com.pme.Player;
 import com.pme.connection.client.nonblocking.NioNonBlockingClient;
@@ -28,9 +28,9 @@ public class NonBlockingMain {
                 System.out.println("Other received: " + message);
                 other.sendMessage(message);
                 message = initiator.receiveMessage();
-//                while (message == null || message.isBlank()) {
-//                    message = initiator.receiveMessage();
-//                }
+                while (message == null || message.isBlank()) {
+                    message = initiator.receiveMessage();
+                }
                 System.out.println("Initiator received: " + message);
             }
             initiator.done();

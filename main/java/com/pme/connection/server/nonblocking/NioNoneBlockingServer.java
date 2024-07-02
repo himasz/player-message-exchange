@@ -4,21 +4,23 @@ import com.pme.connection.server.IServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
 
 public class NioNoneBlockingServer implements IServer {
     private final int port;
     private Selector selector;
     private ServerSocketChannel serverChannel;
     Executor networkExecutor = Executors.newSingleThreadExecutor();
-    Executor readingEXecutor = Executors.newSingleThreadExecutor();
     private final CopyOnWriteArrayList<SocketChannel> clients = new CopyOnWriteArrayList<>();
     private volatile boolean running;
 
@@ -44,14 +46,13 @@ public class NioNoneBlockingServer implements IServer {
     }
 
     private void connectionLoop() {
-        while (running) {
-            try {
+        try {
+            while (running) {
                 selector.select(); // Block until events are available
                 Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
                 while (keys.hasNext()) {
                     SelectionKey key = keys.next();
                     keys.remove();
-
                     if (!key.isValid()) {
                         continue;
                     }
@@ -59,15 +60,51 @@ public class NioNoneBlockingServer implements IServer {
                     if (key.isAcceptable()) {
                         accept(key);
                     } else if (key.isReadable()) {
-                        SocketChannel channel = (SocketChannel) key.channel();
-                        readingEXecutor.execute(new NonBlockingClientHandler(key, channel, clients));
+                        SocketChannel socketChannel = (SocketChannel) key.channel();
+                        Optional<SocketChannel> otherOptional = clients.stream().filter(socketChannel1 -> socketChannel != socketChannel1).findFirst();
+                        otherOptional.ifPresent(otherChannel -> handleClient(otherChannel, socketChannel, key));
                     }
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         closeAll();
+    }
+
+    private void handleClient(SocketChannel otherSocketChannel, SocketChannel socketChannel, SelectionKey key) {
+        try {
+            Counter counter = (Counter) key.attachment();
+            if (counter == null) {
+                counter = new Counter();
+            }
+            ByteBuffer readBuffer = ByteBuffer.allocate(256);
+            ByteBuffer writeBuffer = ByteBuffer.allocate(256);
+            readBuffer.clear();
+            int numRead = socketChannel.read(readBuffer);
+
+            if (numRead > 0) {
+                readBuffer.flip();
+                byte[] data = new byte[numRead];
+                readBuffer.get(data);
+                String message = new String(data).trim();
+                System.out.println("Server: " + message);
+
+                message += " - " + counter.get();
+                counter.increment();
+                key.attach(counter);
+                writeBuffer.clear();
+                writeBuffer.put(message.getBytes());
+                writeBuffer.flip();
+                otherSocketChannel.write(writeBuffer);
+            } else if (numRead == -1) {
+                socketChannel.close();
+                key.cancel();
+                System.out.println("Client disconnected");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void accept(SelectionKey key) throws IOException {
