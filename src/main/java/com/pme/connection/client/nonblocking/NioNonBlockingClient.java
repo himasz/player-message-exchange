@@ -7,13 +7,29 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+/**
+ * The NioNonBlockingClient class implements the IClient interface and represents a client
+ * that connects to a server using non-blocking I/O operations with Java NIO (New Input/Output).
+ * It facilitates sending and receiving messages to and from the server over a non-blocking socket connection.
+ */
 public class NioNonBlockingClient implements IClient {
+    /**
+     * The port number of the server to which the client connects.
+     */
     private final int port;
+
+    /**
+     * The hostname or IP address of the server to which the client connects.
+     */
     private final String hostname;
+
+    /**
+     * The non-blocking socket channel used for the connection to the server.
+     */
     private SocketChannel socketChannel;
 
     public NioNonBlockingClient() {
-        this("localhost", 3457);
+        this("localhost", 3465);
     }
 
     public NioNonBlockingClient(String hostname, int port) {

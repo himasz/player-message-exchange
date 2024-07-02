@@ -15,18 +15,23 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-
+/**
+ * The NioNonBlockingServer class implements the IServer interface and represents a
+ * non-blocking I/O server using Java NIO (New Input/Output). This server is designed
+ * to handle multiple client connections concurrently without blocking operations.
+ * It uses a single thread to handle I/O operations.
+ */
 public class NioNonBlockingServer implements IServer {
     private final int port;
     private Selector selector;
     private ServerSocketChannel serverChannel;
     Executor networkExecutor = Executors.newSingleThreadExecutor();
-    private final CopyOnWriteArrayList<SocketChannel> clients = new CopyOnWriteArrayList<>();
-    private volatile boolean running;
+    private volatile boolean running = true;
     private SelectionKey serverKey;
+    private final CopyOnWriteArrayList<SocketChannel> clients = new CopyOnWriteArrayList<>();
 
     public NioNonBlockingServer() {
-        this(3457);
+        this(3465);
     }
 
     public NioNonBlockingServer(int port) {
@@ -82,6 +87,7 @@ public class NioNonBlockingServer implements IServer {
             if (counter == 11) {
                 socketChannel.close();
                 if (socketChannel.socket().isClosed() && otherSocketChannel.socket().isClosed()) {
+                    serverChannel.close();
                     serverKey.cancel();
                 }
                 return;

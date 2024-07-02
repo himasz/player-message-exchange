@@ -9,17 +9,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * The BlockingServer class implements the IServer interface and represents a
+ * multi-threaded server that accepts and handles client connections using a
+ * blocking I/O approach. It listens for incoming client connections on a
+ * specified port and assigns each connection to a separate thread for handling using BlockingClientHandler.
+ */
+
 public class BlockingServer implements IServer {
     private final int port;
     private ServerSocket serverSocket;
     private final CopyOnWriteArrayList<Socket> clients = new CopyOnWriteArrayList<>();
     Executor networkExecutor = Executors.newSingleThreadExecutor();
     Executor clientsExecutor = Executors.newFixedThreadPool(2);
-    private boolean running = true;
+    private volatile boolean running;
 
     public BlockingServer() {
         //Assume we are getting the port from configuration file
-        this(3455);
+        this(3465);
     }
 
     public BlockingServer(int port) {
@@ -29,6 +36,7 @@ public class BlockingServer implements IServer {
     @Override
     public void startServer() throws IOException {
         this.serverSocket = new ServerSocket(port);
+        running = true;
         System.out.println("Server started on port " + port);
         networkExecutor.execute(this::connectionLoop);
     }

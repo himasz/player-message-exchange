@@ -5,6 +5,11 @@ import com.pme.connection.server.blocking.BlockingServer;
 
 import java.io.IOException;
 
+/**
+ * The BlockingMain class is the entry point for running a blocking I/O example.
+ * It starts a blocking server, creates two player instances that communicate with each other
+ * through the server, and demonstrates sending and receiving messages between the players.
+ */
 public class BlockingMain {
     public static void main(String[] args) {
         try {

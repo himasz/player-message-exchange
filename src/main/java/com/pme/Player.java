@@ -5,8 +5,20 @@ import com.pme.connection.client.IClient;
 
 import java.io.IOException;
 
+/**
+ * The Player class represents a player who can connect to a server,
+ * send messages to the server, receive messages from the other player connected to the  server, and close the connection.
+ * It uses an IClient implementation to manage the connection and communication with the server.
+ */
 public class Player {
+    /**
+     * The name of the player.
+     */
     private final String name;
+
+    /**
+     * The client channel used for communication with the server.
+     */
     private final IClient channel;
 
     public Player(String name) {
