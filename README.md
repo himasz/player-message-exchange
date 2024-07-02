@@ -9,6 +9,29 @@ This project demonstrates examples of blocking and non-blocking (NIO) server-cli
 
 In the `connection` package, you will find the implementation of both blocking and non-blocking servers and clients.
 
+#### Project Structure
+
+Here is an overview of the key files in the project:
+
+```
+/player-message-exchange/src/main/java/com/test/blocking/OtherPlayerMain.java
+/player-message-exchange/src/main/java/com/test/blocking/InitiatorPlayerMain.java
+/player-message-exchange/src/main/java/com/test/blocking/BlockingServerMain.java
+/player-message-exchange/src/main/java/com/test/blocking/BlockingMain.java
+/player-message-exchange/src/main/java/com/test/nonblocking/NonBlockingServerMain.java
+/player-message-exchange/src/main/java/com/test/nonblocking/NonBlockingMain.java
+/player-message-exchange/src/main/java/com/test/nonblocking/NonBlockingOtherPlayerMain.java
+/player-message-exchange/src/main/java/com/test/nonblocking/NonBlockingInitiatorPlayerMain.java
+/player-message-exchange/src/main/java/com/pme/connection/server/blocking/BlockingClientHandler.java
+/player-message-exchange/src/main/java/com/pme/connection/server/blocking/BlockingServer.java
+/player-message-exchange/src/main/java/com/pme/connection/server/nonblocking/NioNonBlockingServer.java
+/player-message-exchange/src/main/java/com/pme/connection/server/IServer.java
+/player-message-exchange/src/main/java/com/pme/connection/client/blocking/BlockingClient.java
+/player-message-exchange/src/main/java/com/pme/connection/client/nonblocking/NioNonBlockingClient.java
+/player-message-exchange/src/main/java/com/pme/connection/client/IClient.java
+/player-message-exchange/src/main/java/com/pme/Player.java
+```
+
 ### Running the Project
 
 You have two options to run the project:
@@ -48,6 +71,3 @@ You can run the project examples using the following scripts inside the `scripts
 - **Blocking Example**: Demonstrates a server and clients using blocking I/O operations.
 - **Non-Blocking Example**: Demonstrates a server and clients using non-blocking I/O operations (NIO).
 - **Different PIDs**: Running scripts with different PIDs ensures that the server and clients run in separate processes.
-
----
-
