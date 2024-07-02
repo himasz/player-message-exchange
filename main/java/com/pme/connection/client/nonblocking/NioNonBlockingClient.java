@@ -37,7 +37,6 @@ public class NioNonBlockingClient implements IClient {
     @Override
     public void sendMessage(String message) throws IOException {
         ByteBuffer writeBuffer = ByteBuffer.allocate(256);
-        //TODO: add bit manipulation of the length of the message!
         writeBuffer.put(message.getBytes());
         writeBuffer.flip();
         while (writeBuffer.hasRemaining()) {

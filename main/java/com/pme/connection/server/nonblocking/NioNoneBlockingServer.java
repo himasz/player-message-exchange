@@ -74,9 +74,9 @@ public class NioNoneBlockingServer implements IServer {
 
     private void handleClient(SocketChannel otherSocketChannel, SocketChannel socketChannel, SelectionKey key) {
         try {
-            Counter counter = (Counter) key.attachment();
+            Integer counter = (Integer) key.attachment();
             if (counter == null) {
-                counter = new Counter();
+                counter = 1;
             }
             ByteBuffer readBuffer = ByteBuffer.allocate(256);
             ByteBuffer writeBuffer = ByteBuffer.allocate(256);
@@ -90,9 +90,8 @@ public class NioNoneBlockingServer implements IServer {
                 String message = new String(data).trim();
                 System.out.println("Server: " + message);
 
-                message += " - " + counter.get();
-                counter.increment();
-                key.attach(counter);
+                message += " - " + counter;
+                key.attach(counter + 1);
                 writeBuffer.clear();
                 writeBuffer.put(message.getBytes());
                 writeBuffer.flip();
