@@ -22,24 +22,16 @@ public class NonBlockingMain {
             for (int i = 1; i < 11; i++) {
                 initiator.sendMessage(!message.isEmpty() ? message : "Hello");
                 message = other.receiveMessage();
-                while (message == null || message.isBlank()) {
-                    message = other.receiveMessage();
-                }
                 System.out.println("Other received: " + message);
                 other.sendMessage(message);
                 message = initiator.receiveMessage();
-                while (message == null || message.isBlank()) {
-                    message = initiator.receiveMessage();
-                }
                 System.out.println("Initiator received: " + message);
             }
             initiator.done();
             other.done();
             server.close();
             System.exit(0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 

@@ -48,6 +48,9 @@ public class NioNonBlockingClient implements IClient {
     public String receiveMessage() throws IOException {
         ByteBuffer readBuffer = ByteBuffer.allocate(256);
         int bytesRead = socketChannel.read(readBuffer);
+        while (bytesRead == 0) {
+            bytesRead = socketChannel.read(readBuffer);
+        }
         if (bytesRead != -1) {
             readBuffer.flip();
             return new String(readBuffer.array()).trim();
