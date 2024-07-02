@@ -1,20 +1,24 @@
-package com.test.blocking;
+package com.test.nonblocking;
 
 import com.pme.Player;
-import com.pme.connection.server.blocking.BlockingServer;
+import com.pme.connection.client.nonblocking.NioNonBlockingClient;
+import com.pme.connection.server.IServer;
+import com.pme.connection.server.nonblocking.NioNonBlockingServer;
 
 import java.io.IOException;
 
-public class BlockingMain {
+public class NonBlockingMain {
     public static void main(String[] args) {
         try {
-            BlockingServer server = new BlockingServer();
+            System.out.println("Run the non-blocking example: ");
+            IServer server = new NioNonBlockingServer();
             server.startServer();
-
-            Player initiator = new Player("initiator");
+            Player initiator = new Player("initiator", new NioNonBlockingClient());
             initiator.connect();
-            Player other = new Player("other");
+            Thread.sleep(10);
+            Player other = new Player("other", new NioNonBlockingClient());
             other.connect();
+
             String message = "";
             for (int i = 1; i < 11; i++) {
                 initiator.sendMessage(!message.isEmpty() ? message : "Hello");
@@ -28,7 +32,7 @@ public class BlockingMain {
             other.done();
             server.close();
             System.exit(0);
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
