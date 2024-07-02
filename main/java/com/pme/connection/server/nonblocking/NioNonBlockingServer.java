@@ -16,7 +16,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 
-public class NioNoneBlockingServer implements IServer {
+public class NioNonBlockingServer implements IServer {
     private final int port;
     private Selector selector;
     private ServerSocketChannel serverChannel;
@@ -24,11 +24,11 @@ public class NioNoneBlockingServer implements IServer {
     private final CopyOnWriteArrayList<SocketChannel> clients = new CopyOnWriteArrayList<>();
     private volatile boolean running;
 
-    public NioNoneBlockingServer() {
+    public NioNonBlockingServer() {
         this(3455);
     }
 
-    public NioNoneBlockingServer(int port) {
+    public NioNonBlockingServer(int port) {
         this.port = port;
     }
 

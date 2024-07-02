@@ -3,14 +3,14 @@ package com.test.nonblocking;
 import com.pme.Player;
 import com.pme.connection.client.nonblocking.NioNonBlockingClient;
 import com.pme.connection.server.IServer;
-import com.pme.connection.server.nonblocking.NioNoneBlockingServer;
+import com.pme.connection.server.nonblocking.NioNonBlockingServer;
 
 import java.io.IOException;
 
 public class NonBlockingMain {
     public static void main(String[] args) {
         try {
-            IServer server = new NioNoneBlockingServer();
+            IServer server = new NioNonBlockingServer();
             server.startServer();
             Player initiator = new Player("initiator", new NioNonBlockingClient());
             initiator.connect();
