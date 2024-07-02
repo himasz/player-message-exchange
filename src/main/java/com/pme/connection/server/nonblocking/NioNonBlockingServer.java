@@ -23,9 +23,10 @@ public class NioNonBlockingServer implements IServer {
     Executor networkExecutor = Executors.newSingleThreadExecutor();
     private final CopyOnWriteArrayList<SocketChannel> clients = new CopyOnWriteArrayList<>();
     private volatile boolean running;
+    private SelectionKey serverKey;
 
     public NioNonBlockingServer() {
-        this(3455);
+        this(3457);
     }
 
     public NioNonBlockingServer(int port) {
@@ -38,7 +39,7 @@ public class NioNonBlockingServer implements IServer {
         serverChannel = ServerSocketChannel.open();
         serverChannel.bind(new InetSocketAddress(port));
         serverChannel.configureBlocking(false);
-        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+        serverKey = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
         running = true;
         System.out.println("Server started on port " + serverChannel.socket().getLocalPort());
 
@@ -77,6 +78,13 @@ public class NioNonBlockingServer implements IServer {
             Integer counter = (Integer) key.attachment();
             if (counter == null) {
                 counter = 1;
+            }
+            if (counter == 11) {
+                socketChannel.close();
+                if (socketChannel.socket().isClosed() && otherSocketChannel.socket().isClosed()) {
+                    serverKey.cancel();
+                }
+                return;
             }
             ByteBuffer readBuffer = ByteBuffer.allocate(256);
             ByteBuffer writeBuffer = ByteBuffer.allocate(256);

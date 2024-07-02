@@ -13,7 +13,7 @@ public class NioNonBlockingClient implements IClient {
     private SocketChannel socketChannel;
 
     public NioNonBlockingClient() {
-        this("localhost", 3455);
+        this("localhost", 3457);
     }
 
     public NioNonBlockingClient(String hostname, int port) {

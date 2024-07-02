@@ -30,22 +30,19 @@ public class BlockingServer implements IServer {
     public void startServer() throws IOException {
         this.serverSocket = new ServerSocket(port);
         System.out.println("Server started on port " + port);
-        networkExecutor.execute(() -> {
-            try {
-                connectionLoop();
-            } catch (IOException e) {
-                //TODO: check of return it to the client
-                System.out.println(e.getMessage());
-            }
-        });
+        networkExecutor.execute(this::connectionLoop);
     }
 
-    private void connectionLoop() throws IOException {
-        while (running) {
-            Socket socket = serverSocket.accept();
-            System.out.println("New Client is Connected!");
-            clients.add(socket);
-            clientsExecutor.execute(new BlockingClientHandler(socket, clients));
+    private void connectionLoop() {
+        try {
+            while (running) {
+                Socket socket = serverSocket.accept();
+                System.out.println("New Client is Connected!");
+                clients.add(socket);
+                clientsExecutor.execute(new BlockingClientHandler(socket, serverSocket, clients));
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 

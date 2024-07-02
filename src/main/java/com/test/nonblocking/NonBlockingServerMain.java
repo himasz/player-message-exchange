@@ -6,13 +6,11 @@ import java.io.IOException;
 
 public class NonBlockingServerMain {
     public static void main(String[] args) {
+        NioNonBlockingServer server = new NioNonBlockingServer();
         try {
-            NioNonBlockingServer server = new NioNonBlockingServer();
             server.startServer();
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            server.close();
         }
-
     }
 }

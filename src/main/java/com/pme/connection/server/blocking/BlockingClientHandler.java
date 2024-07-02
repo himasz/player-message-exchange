@@ -1,28 +1,32 @@
 package com.pme.connection.server.blocking;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BlockingClientHandler implements Runnable {
     private final Socket socket;
+    private final ServerSocket serverSocket;
     private final CopyOnWriteArrayList<Socket> players;
     int count = 0;
 
-    public BlockingClientHandler(Socket socket, CopyOnWriteArrayList<Socket> players) {
+    public BlockingClientHandler(Socket socket, ServerSocket serverSocket, CopyOnWriteArrayList<Socket> players) {
         this.socket = socket;
         this.players = players;
+        this.serverSocket = serverSocket;
     }
 
     public void run() {
+        Socket otherSocket = null;
         try (InputStream input = socket.getInputStream(); BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             while (players.size() == 1) {
                 // Wait for another player to join
             }
             Optional<Socket> optionalOtherSocket = players.stream().filter(socket1 -> socket != socket1).findFirst();
             if (optionalOtherSocket.isPresent()) {
-                Socket otherSocket = optionalOtherSocket.get();
+                otherSocket = optionalOtherSocket.get();
                 PrintWriter otherWriter = new PrintWriter(otherSocket.getOutputStream(), true);
 
                 String text;
@@ -36,6 +40,9 @@ public class BlockingClientHandler implements Runnable {
         } finally {
             try {
                 socket.close();
+                if (socket.isClosed() && otherSocket != null && otherSocket.isClosed()) {
+                    serverSocket.close();
+                }
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
             }

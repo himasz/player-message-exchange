@@ -15,7 +15,6 @@ public class NonBlockingMain {
             server.startServer();
             Player initiator = new Player("initiator", new NioNonBlockingClient());
             initiator.connect();
-            Thread.sleep(10);
             Player other = new Player("other", new NioNonBlockingClient());
             other.connect();
 
@@ -32,7 +31,7 @@ public class NonBlockingMain {
             other.done();
             server.close();
             System.exit(0);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
