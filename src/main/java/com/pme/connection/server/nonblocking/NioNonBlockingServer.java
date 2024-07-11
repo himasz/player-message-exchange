@@ -12,7 +12,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -25,9 +25,10 @@ public class NioNonBlockingServer implements IServer {
     private final int port;
     private Selector selector;
     private ServerSocketChannel serverChannel;
-    Executor networkExecutor = Executors.newSingleThreadExecutor();
     private volatile boolean running = true;
     private SelectionKey serverKey;
+
+    private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
     private final CopyOnWriteArrayList<SocketChannel> clients = new CopyOnWriteArrayList<>();
 
     public NioNonBlockingServer() {
@@ -87,6 +88,7 @@ public class NioNonBlockingServer implements IServer {
             if (counter == 11) {
                 socketChannel.close();
                 if (socketChannel.socket().isClosed() && otherSocketChannel.socket().isClosed()) {
+                    networkExecutor.shutdown();
                     serverChannel.close();
                     serverKey.cancel();
                 }

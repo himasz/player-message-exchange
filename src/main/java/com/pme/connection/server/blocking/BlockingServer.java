@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
@@ -20,8 +20,8 @@ public class BlockingServer implements IServer {
     private final int port;
     private ServerSocket serverSocket;
     private final CopyOnWriteArrayList<Socket> clients = new CopyOnWriteArrayList<>();
-    Executor networkExecutor = Executors.newSingleThreadExecutor();
-    Executor clientsExecutor = Executors.newFixedThreadPool(2);
+    private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService clientsExecutor = Executors.newFixedThreadPool(2);
     private volatile boolean running;
 
     public BlockingServer() {
@@ -61,6 +61,8 @@ public class BlockingServer implements IServer {
                 player.close();
             }
             running = false;
+            networkExecutor.shutdown();
+            clientsExecutor.shutdown();
             serverSocket.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
